@@ -4,7 +4,7 @@ import {
   type RouteProp,
 } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, RefreshControl, View } from 'react-native';
 
 import { AsyncState } from '../design-system/AsyncState';
@@ -14,6 +14,11 @@ import { SearchInput } from '../design-system/SearchInput';
 import { colors } from '../design-system/tokens';
 import { TaskCard } from '../features/tasks/TaskCard';
 import { TaskFiltersField } from '../features/tasks/TaskFiltersField';
+import {
+  getNextTaskPageParam,
+  mergeUniqueTaskPages,
+  shouldRequestTaskPage,
+} from '../features/tasks/pagination';
 import { useInfiniteTasks } from '../features/tasks/queries';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import type { RootStackParamList } from '../navigation/types';
@@ -44,10 +49,41 @@ export function TasksScreen() {
     search: debouncedSearch,
     sort,
   });
-  const tasks = useMemo(
-    () => query.data?.pages.flatMap(page => page.data) ?? [],
-    [query.data],
+  const tasks = useMemo(() => mergeUniqueTaskPages(query.data), [query.data]);
+  const nextPageOffset = useMemo(() => {
+    const pages = query.data?.pages;
+    if (!pages?.length) return undefined;
+    const lastPage = pages.at(-1);
+    return lastPage ? getNextTaskPageParam(lastPage, pages) : undefined;
+  }, [query.data]);
+  const lastRequestedOffset = useRef<number | undefined>(undefined);
+
+  useEffect(() => {
+    lastRequestedOffset.current = undefined;
+  }, [debouncedSearch, sort, status, teamId]);
+
+  const loadNextPage = useCallback(
+    (force = false) => {
+      if (
+        !shouldRequestTaskPage({
+          force,
+          isFetching: query.isFetchingNextPage,
+          lastRequestedOffset: lastRequestedOffset.current,
+          nextOffset: nextPageOffset,
+        })
+      )
+        return;
+
+      lastRequestedOffset.current = nextPageOffset as number;
+      void query.fetchNextPage({ cancelRefetch: false });
+    },
+    [nextPageOffset, query],
   );
+
+  const refresh = useCallback(() => {
+    lastRequestedOffset.current = undefined;
+    void query.refetch();
+  }, [query]);
 
   return (
     <ScreenFrame
@@ -108,18 +144,21 @@ export function TasksScreen() {
             ListFooterComponent={
               query.isFetchingNextPage ? (
                 <AsyncState kind="loading" title="Carregando mais..." />
+              ) : query.isFetchNextPageError ? (
+                <AsyncState
+                  kind="error"
+                  title="Falha ao carregar mais tarefas"
+                  onRetry={() => loadNextPage(true)}
+                />
               ) : null
             }
-            onEndReached={() => {
-              if (query.hasNextPage && !query.isFetchingNextPage)
-                void query.fetchNextPage();
-            }}
+            onEndReached={() => loadNextPage()}
             onEndReachedThreshold={0.4}
             refreshControl={
               <RefreshControl
                 tintColor={colors.primary}
                 refreshing={query.isRefetching && !query.isFetchingNextPage}
-                onRefresh={() => void query.refetch()}
+                onRefresh={refresh}
               />
             }
           />

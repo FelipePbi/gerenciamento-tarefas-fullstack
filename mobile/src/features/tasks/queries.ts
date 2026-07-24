@@ -13,6 +13,7 @@ import type {
   TaskInput,
   TaskStatus,
 } from '../../types/domain';
+import { getNextTaskPageParam, TASK_PAGE_SIZE } from './pagination';
 
 export type TaskFilters = {
   teamId?: string;
@@ -31,14 +32,16 @@ export const taskKeys = {
 };
 
 export function useInfiniteTasks(filters: TaskFilters) {
-  const limit = filters.limit ?? 20;
+  const normalizedFilters = {
+    ...filters,
+    limit: filters.limit ?? TASK_PAGE_SIZE,
+  };
   return useInfiniteQuery({
-    queryKey: taskKeys.list(filters),
+    queryKey: taskKeys.list(normalizedFilters),
     queryFn: ({ pageParam, signal }) =>
-      api.listTasks({ ...filters, limit, offset: pageParam }, signal),
+      api.listTasks({ ...normalizedFilters, offset: pageParam }, signal),
     initialPageParam: 0,
-    getNextPageParam: last =>
-      last.meta.hasNext ? last.meta.offset + last.meta.limit : undefined,
+    getNextPageParam: getNextTaskPageParam,
   });
 }
 

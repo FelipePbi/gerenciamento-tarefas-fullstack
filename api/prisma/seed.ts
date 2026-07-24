@@ -20,7 +20,7 @@ const teams = [
   },
 ] as const;
 
-const tasks = [
+const baseTasks = [
   {
     id: "a1111111-1111-4111-8111-111111111111",
     title: "Revisar fluxo de cadastro",
@@ -92,6 +92,148 @@ const tasks = [
     teamIds: [teams[0].id],
   },
 ] as const;
+
+const designTaskCatalog = [
+  [
+    "Mapear jornada de onboarding",
+    "Organizar etapas e pontos de decisao do primeiro acesso.",
+  ],
+  [
+    "Revisar hierarquia da dashboard",
+    "Ajustar prioridade visual dos indicadores principais.",
+  ],
+  [
+    "Criar estados vazios",
+    "Definir mensagens e ilustracoes para listas sem conteudo.",
+  ],
+  [
+    "Padronizar campos de formulario",
+    "Alinhar alturas, espacamentos e mensagens de validacao.",
+  ],
+  [
+    "Documentar paleta semantica",
+    "Relacionar cores aos estados de interface e acessibilidade.",
+  ],
+  [
+    "Prototipar navegacao principal",
+    "Validar acesso rapido aos fluxos mais utilizados.",
+  ],
+  [
+    "Auditar tipografia mobile",
+    "Conferir escala, pesos e alturas de linha no Android.",
+  ],
+  [
+    "Desenhar feedback de carregamento",
+    "Criar estados consistentes para esperas curtas e longas.",
+  ],
+  [
+    "Revisar componentes de selecao",
+    "Unificar comportamento de modais, filtros e dropdowns.",
+  ],
+  [
+    "Preparar handoff da tela Times",
+    "Registrar medidas, estados e regras dos componentes.",
+  ],
+  [
+    "Mapear erros da criacao de tarefa",
+    "Definir mensagens claras para cada falha de validacao.",
+  ],
+  [
+    "Ajustar contraste dos chips",
+    "Garantir leitura dos status em todas as cores de fundo.",
+  ],
+  [
+    "Criar variacoes de cards",
+    "Cobrir titulos longos, descricoes vazias e multiplos times.",
+  ],
+  [
+    "Revisar fluxo de exclusao",
+    "Validar confirmacao, cancelamento e retorno para a lista.",
+  ],
+  [
+    "Definir grid responsivo",
+    "Documentar margens e colunas para telas Android menores.",
+  ],
+  [
+    "Prototipar busca sem resultados",
+    "Especificar estado vazio e acao para limpar filtros.",
+  ],
+  [
+    "Organizar biblioteca de icones",
+    "Catalogar tamanhos, cores e usos permitidos no produto.",
+  ],
+  [
+    "Revisar acessibilidade dos modais",
+    "Conferir foco, leitura e areas minimas de toque.",
+  ],
+  [
+    "Criar especificacao do filtro",
+    "Detalhar selecao de status, ordenacao e aplicacao.",
+  ],
+  [
+    "Validar teclado nos formularios",
+    "Garantir campos e botoes visiveis durante digitacao.",
+  ],
+  [
+    "Refinar tela Nova tarefa",
+    "Aproximar campos, seletores e botao da referencia visual.",
+  ],
+  [
+    "Refinar tela Editar tarefa",
+    "Diferenciar campos bloqueados do seletor de status ativo.",
+  ],
+  [
+    "Revisar lista global de tarefas",
+    "Validar busca, filtro e ordenacao em diferentes volumes.",
+  ],
+  [
+    "Revisar lista por time",
+    "Confirmar titulo contextual e controles de pesquisa.",
+  ],
+  [
+    "Preparar tokens de espacamento",
+    "Consolidar medidas usadas por cards, campos e botoes.",
+  ],
+  [
+    "Criar guia de microinteracoes",
+    "Definir feedback para toque, sucesso, erro e atualizacao.",
+  ],
+  [
+    "Validar layout no Pixel 4",
+    "Comparar dimensoes e alinhamentos com viewport de referencia.",
+  ],
+  [
+    "Auditar textos da interface",
+    "Padronizar rotulos, placeholders e mensagens de apoio.",
+  ],
+  [
+    "Preparar revisao visual final",
+    "Montar checklist para comparacao lado a lado com o Figma.",
+  ],
+  [
+    "Publicar documentacao de design",
+    "Consolidar decisoes visuais e exemplos aprovados.",
+  ],
+] as const;
+
+const designStatuses = [
+  TaskStatus.PENDING,
+  TaskStatus.IN_PROGRESS,
+  TaskStatus.COMPLETED,
+] as const;
+
+const designTasks = designTaskCatalog.map(([title, description], index) => {
+  const sequence = String(index + 1);
+  return {
+    id: `b${sequence.padStart(7, "0")}-0000-4000-8000-${sequence.padStart(12, "0")}`,
+    title,
+    description,
+    status: designStatuses[index % designStatuses.length],
+    teamIds: [teams[2].id],
+  };
+});
+
+const tasks = [...baseTasks, ...designTasks];
 
 async function seed(): Promise<void> {
   for (const team of teams) {

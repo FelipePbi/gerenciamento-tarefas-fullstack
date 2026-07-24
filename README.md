@@ -1,4 +1,4 @@
-# Gerenciador de Times e Tarefas - React Native + Express + PostgreSQL
+# Gerenciador de Times e Tarefas
 
 Aplicação fullstack para gerenciar times e tarefas. Mobile React Native CLI consome API Express real; API persiste dados em PostgreSQL via Prisma. Inclui CRUDs, relacionamento N:N, busca, filtros combinados, ordenação, paginação, cache offline, optimistic update, migrations, seed, Swagger, testes e automação Windows.
 
@@ -21,16 +21,16 @@ Aplicação fullstack para gerenciar times e tarefas. Mobile React Native CLI co
 
 ## Stack validada
 
-| Camada | Tecnologias |
-| --- | --- |
-| Mobile | React Native CLI 0.86, React 19, TypeScript 5.8, React Navigation 7 |
-| Estado remoto | TanStack React Query 5 + persistência MMKV 4 + NetInfo |
-| Formulários | React Hook Form 7 + Zod 4 (`zod/v3` no bundle RN por compatibilidade Metro) |
-| UI | NativeWind 4, Tailwind CSS 3, Lucide, React Native SVG, Safe Area |
-| API | Node.js 24 LTS, Express 5, TypeScript 6, Zod 4 |
-| Dados | PostgreSQL 18, Prisma 6.19, migrations SQL versionadas |
-| Testes | Vitest, Supertest, Jest, React Native Testing Library |
-| Ambiente usado | Windows 11, JDK 17, Android API 36, AVD `RN_Android_API_36` |
+| Camada         | Tecnologias                                                         |
+| -------------- | ------------------------------------------------------------------- |
+| Mobile         | React Native CLI 0.86, React 19, TypeScript 5.8, React Navigation 7 |
+| Estado remoto  | TanStack React Query 5 + persistência MMKV 4 + NetInfo              |
+| Formulários    | React Hook Form 7 + Zod 4                                           |
+| UI             | NativeWind 4, Tailwind CSS 3, React Native                          |
+| API            | Node.js 24 LTS, Express 5, TypeScript 6, Zod 4                      |
+| Dados          | PostgreSQL 18, Prisma 6.19, migrations SQL versionadas              |
+| Testes         | Vitest, Supertest, Jest, React Native Testing Library               |
+| Ambiente usado | Windows 11, JDK 17, Android API 36, AVD `RN_Android_API_36`         |
 
 ## Arquitetura
 
@@ -69,12 +69,12 @@ flowchart LR
 
 ### Decisões
 
-- PostgreSQL: integridade referencial, transações, N:N, filtros e ordenação SQL. Trade-off: exige processo externo e migrations.
-- Prisma: schema tipado, migration reproduzível e includes que evitam N+1. Trade-off: engine e etapa de geração.
+- PostgreSQL: integridade referencial, transações, N:N, filtros e ordenação SQL.
+- Prisma: schema tipado, migration reproduzível e includes que evitam N+1.
 - Express: pequeno, explícito e adequado ao escopo. Validação e erros ficam fora de componentes mobile.
 - React Query: API e cache são a única fonte de server state. Estado de busca/filtro continua local.
 - MMKV: cache síncrono e rápido no Android. MMKV 4 exige New Architecture/Nitro, habilitada no projeto.
-- Sem Redux/Zustand: nenhum estado global adicional e necessário.
+- Sem Redux/Zustand: nenhum estado global adicional foi necessário.
 - Sem fila offline de mutação: evita duplicação e conflitos silenciosos. Usuário recebe erro real; queries são refeitas na reconexão.
 
 ## Modelo de dados
@@ -132,21 +132,21 @@ Copy-Item api\.env.example api\.env
 Copy-Item mobile\.env.example mobile\.env
 ```
 
-| Arquivo/variável | Finalidade | Exemplo seguro | Obrigatória |
-| --- | --- | --- | --- |
-| raiz `POSTGRES_DB` | banco do Compose | `rn_app` | não, possui default |
-| raiz `POSTGRES_USER` | usuário Compose | `rn_app_user` | não, possui default |
-| raiz `POSTGRES_PASSWORD` | senha local Compose | `rn_app_password` | não, possui default |
-| raiz `POSTGRES_PORT` | porta host | `5433` | não |
-| API `NODE_ENV` | ambiente | `development` | não |
-| API `HOST`/`PORT` | bind HTTP | `0.0.0.0` / `3000` | não |
-| API `PGHOST`/`PGPORT` | PostgreSQL | `127.0.0.1` / `5433` com Compose | não |
-| API `PGDATABASE` | database | `rn_app` | sim |
-| API `PGUSER` | usuário | `rn_app_user` | sim |
-| API `PGPASSWORD` | senha | `rn_app_password` | sim |
-| API `PGPOOL_MAX` | limite do pool | `10` | não |
-| API `CORS_ORIGIN` | origem permitida | `*` somente local | não |
-| Mobile `API_BASE_URL` | host da API | `http://localhost:3000` | não, possui default local |
+| Arquivo/variável         | Finalidade          | Exemplo seguro                   | Obrigatória               |
+| ------------------------ | ------------------- | -------------------------------- | ------------------------- |
+| raiz `POSTGRES_DB`       | banco do Compose    | `rn_app`                         | não, possui default       |
+| raiz `POSTGRES_USER`     | usuário Compose     | `rn_app_user`                    | não, possui default       |
+| raiz `POSTGRES_PASSWORD` | senha local Compose | `rn_app_password`                | não, possui default       |
+| raiz `POSTGRES_PORT`     | porta host          | `5433`                           | não                       |
+| API `NODE_ENV`           | ambiente            | `development`                    | não                       |
+| API `HOST`/`PORT`        | bind HTTP           | `0.0.0.0` / `3000`               | não                       |
+| API `PGHOST`/`PGPORT`    | PostgreSQL          | `127.0.0.1` / `5433` com Compose | não                       |
+| API `PGDATABASE`         | database            | `rn_app`                         | sim                       |
+| API `PGUSER`             | usuário             | `rn_app_user`                    | sim                       |
+| API `PGPASSWORD`         | senha               | `rn_app_password`                | sim                       |
+| API `PGPOOL_MAX`         | limite do pool      | `10`                             | não                       |
+| API `CORS_ORIGIN`        | origem permitida    | `*` somente local                | não                       |
+| Mobile `API_BASE_URL`    | host da API         | `http://localhost:3000`          | não, possui default local |
 
 Prisma recebe URL montada internamente a partir de `PG*`; senha não precisa ser duplicada em `DATABASE_URL`.
 
@@ -227,25 +227,25 @@ aberto e execute `npm run android` em outro.
 
 ## Scripts
 
-| Comando na raiz | Ação |
-| --- | --- |
-| `npm ci` | instala raiz e ambos os projetos |
-| `npm run dev` | inicia API, aguarda healthcheck e mantém Metro no terminal atual |
-| `npm start` | inicia API compilada |
-| `npm run lint` | ESLint API + mobile |
-| `npm run format` | Prettier API + mobile |
-| `npm run format:check` | valida formatação |
-| `npm run typecheck` | TypeScript estrito em ambos |
-| `npm test` | testes API + mobile |
-| `npm run test:unit` | unitários API |
-| `npm run test:integration` | integração API/PostgreSQL |
-| `npm run test:mobile` | Jest/RNTL |
-| `npm run build` | compila API + APK debug |
-| `npm run db:up` / `db:down` | sobe/desliga PostgreSQL Compose |
-| `npm run db:migrate` | `prisma migrate deploy` |
-| `npm run db:seed` ou `npm run seed` | seed idempotente |
-| `npm run android` | build, instala e abre app |
-| `npm run validate` | lint, typecheck, testes, build API e APK debug |
+| Comando na raiz                     | Ação                                                             |
+| ----------------------------------- | ---------------------------------------------------------------- |
+| `npm ci`                            | instala raiz e ambos os projetos                                 |
+| `npm run dev`                       | inicia API, aguarda healthcheck e mantém Metro no terminal atual |
+| `npm start`                         | inicia API compilada                                             |
+| `npm run lint`                      | ESLint API + mobile                                              |
+| `npm run format`                    | Prettier API + mobile                                            |
+| `npm run format:check`              | valida formatação                                                |
+| `npm run typecheck`                 | TypeScript estrito em ambos                                      |
+| `npm test`                          | testes API + mobile                                              |
+| `npm run test:unit`                 | unitários API                                                    |
+| `npm run test:integration`          | integração API/PostgreSQL                                        |
+| `npm run test:mobile`               | Jest/RNTL                                                        |
+| `npm run build`                     | compila API + APK debug                                          |
+| `npm run db:up` / `db:down`         | sobe/desliga PostgreSQL Compose                                  |
+| `npm run db:migrate`                | `prisma migrate deploy`                                          |
+| `npm run db:seed` ou `npm run seed` | seed idempotente                                                 |
+| `npm run android`                   | build, instala e abre app                                        |
+| `npm run validate`                  | lint, typecheck, testes, build API e APK debug                   |
 
 ## Contratos da API
 
@@ -302,7 +302,7 @@ curl.exe -X POST http://localhost:3000/api/tasks `
   -d '{"title":"Revisar fluxo","status":"IN_PROGRESS","teamIds":["11111111-1111-4111-8111-111111111111","22222222-2222-4222-8222-222222222222"]}'
 
 # Filtros combinados
-curl.exe "http://localhost:3000/api/tasks?teamId=11111111-1111-4111-8111-111111111111&status=PENDING&search=revisar&sort=updatedAt:desc&limit=20&offset=0"
+curl.exe "http://localhost:3000/api/tasks?teamId=11111111-1111-4111-8111-111111111111&status=PENDING&search=revisar&sort=updatedAt:desc&limit=7&offset=0"
 
 # Alterar status
 curl.exe -X PATCH http://localhost:3000/api/tasks/UUID/status `
@@ -317,7 +317,15 @@ curl.exe -X DELETE http://localhost:3000/api/tasks/UUID
 
 ## Seed
 
-`npm run db:seed` faz upsert de 3 times e 10 tarefas fixas, cobre três status, tarefa sem time, tarefas com vários times e descrições de tarefa pesquisáveis. Depois redefine somente vínculos das tarefas do seed, portanto repetição não duplica dados.
+`npm run db:seed` faz upsert de 3 times e 40 tarefas fixas. O conjunto inclui
+34 tarefas no Design, sendo 30 exclusivas adicionais e distribuídas igualmente
+entre os três status. Também cobre tarefa sem time, tarefas com vários times e
+descrições pesquisáveis. Depois redefine somente vínculos das tarefas do seed,
+portanto repetição não duplica dados.
+
+As listas de tarefas pedem páginas de 7 itens e carregam a próxima página ao se
+aproximar do fim. Offsets repetidos, páginas vazias e IDs já exibidos são
+ignorados para evitar duplicação ou carregamento em loop.
 
 ## Testes e qualidade
 
@@ -341,14 +349,14 @@ npm run build
 
 Fonte: único print anexado ao Goal, prancha 751 x 935 com cinco mockups. Análise detalhada: [`docs/visual-spec.md`](docs/visual-spec.md).
 
-| Região do print | Implementação |
-| --- | --- |
-| Lista `Times`, busca, cards coloridos, CTA | `TeamsScreen`, `TeamCard`, `SearchInput` |
-| Lista `Tarefas`, cards e pills | `TasksScreen`, `TaskCard`; filtros somente na lista global |
-| Detalhe, chips e status rápido | `TaskDetailScreen`, `TaskTeamChips` |
-| `Novo Time` | `TeamFormScreen` com RHF/Zod e paleta |
-| `Nova tarefa` | `TaskFormScreen`, seletores modais de status e multi-times |
-| `Editar tarefa` + lixeira | `TaskFormScreen` com edição completa via `PUT` |
+| Região do print                            | Implementação                                              |
+| ------------------------------------------ | ---------------------------------------------------------- |
+| Lista `Times`, busca, cards coloridos, CTA | `TeamsScreen`, `TeamCard`, `SearchInput`                   |
+| Lista `Tarefas`, cards e pills             | `TasksScreen`, `TaskCard`; busca e filtros globais/por time |
+| Detalhe, chips e status rápido             | `TaskDetailScreen`, `TaskTeamChips`                        |
+| `Novo Time`                                | `TeamFormScreen` com RHF/Zod e paleta                      |
+| `Nova tarefa`                              | `TaskFormScreen`, seletores modais de status e multi-times |
+| `Editar tarefa` + lixeira                  | `TaskFormScreen` com edição completa via `PUT`             |
 
 Tokens aproximados inferidos: canvas `#1D1E22`, surface `#25262B`, input `#151518`, primary `#00A67D`, texto `#F5F5F6`, muted `#81828A`, raios 3-6 dp e padding principal 20 dp. Valores são aproximações visuais, não medidas declaradas pelo design.
 

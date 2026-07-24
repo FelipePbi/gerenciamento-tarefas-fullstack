@@ -15,6 +15,68 @@ describe("teams and tasks integration", () => {
     await prisma.$disconnect();
   });
 
+  it("paginates tasks in stable, non-overlapping batches", async () => {
+    const teamResponse = await request(app)
+      .post("/api/teams")
+      .send({
+        name: `Paginacao Design ${suffix}`,
+        colorHex: "#00C7D9",
+      });
+    expect(teamResponse.status).toBe(201);
+    const team = teamResponse.body.data as { id: string };
+    createdTeamIds.push(team.id);
+
+    for (let index = 0; index < 15; index += 1) {
+      const taskResponse = await request(app)
+        .post("/api/tasks")
+        .send({
+          title: `Paginacao ${suffix} ${String(index).padStart(2, "0")}`,
+          description: `Item ${index} da validacao de paginacao.`,
+          status: "PENDING",
+          teamIds: [team.id],
+        });
+      expect(taskResponse.status).toBe(201);
+      createdTaskIds.push((taskResponse.body.data as { id: string }).id);
+    }
+
+    const responses = await Promise.all(
+      [0, 7, 14].map((offset) =>
+        request(app)
+          .get("/api/tasks")
+          .query({
+            teamId: team.id,
+            search: `Paginacao ${suffix}`,
+            sort: "title:asc",
+            limit: 7,
+            offset,
+          }),
+      ),
+    );
+
+    expect(responses.map((response) => response.status)).toEqual([
+      200, 200, 200,
+    ]);
+    expect(responses.map((response) => response.body.data.length)).toEqual([
+      7, 7, 1,
+    ]);
+    expect(responses.map((response) => response.body.meta.hasNext)).toEqual([
+      true,
+      true,
+      false,
+    ]);
+
+    const pageIds = responses.map((response) =>
+      response.body.data.map((task: { id: string }) => task.id),
+    );
+    expect(new Set(pageIds.flat()).size).toBe(15);
+    expect(pageIds[0].some((id: string) => pageIds[1].includes(id))).toBe(
+      false,
+    );
+    expect(pageIds[1].some((id: string) => pageIds[2].includes(id))).toBe(
+      false,
+    );
+  });
+
   it("executes CRUD, N:N, filters, pagination, status and deletion rules", async () => {
     const teamAResponse = await request(app)
       .post("/api/teams")

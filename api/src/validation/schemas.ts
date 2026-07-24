@@ -57,7 +57,7 @@ export const tasksQuerySchema = z.object({
   teamId: z.uuid().optional(),
   status: z.enum(taskStatuses).optional(),
   search: z.string().trim().max(200).optional().default(""),
-  limit: z.coerce.number().int().min(1).max(100).optional().default(20),
+  limit: z.coerce.number().int().min(1).max(100).optional().default(7),
   offset: z.coerce.number().int().min(0).optional().default(0),
   sort: z
     .enum([

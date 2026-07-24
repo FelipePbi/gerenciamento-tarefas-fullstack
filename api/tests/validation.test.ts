@@ -56,6 +56,7 @@ describe("domain validation", () => {
   });
 
   it("rejects invalid pagination, status and sort", () => {
+    expect(tasksQuerySchema.parse({}).limit).toBe(7);
     expect(() => tasksQuerySchema.parse({ offset: "-1" })).toThrow();
     expect(() => tasksQuerySchema.parse({ status: "DONE" })).toThrow();
     expect(() => tasksQuerySchema.parse({ sort: "DROP TABLE" })).toThrow();

@@ -115,7 +115,7 @@ export const openApiDocument = {
           {
             in: "query",
             name: "limit",
-            schema: { type: "integer", default: 20, maximum: 100 },
+            schema: { type: "integer", default: 7, maximum: 100 },
           },
           {
             in: "query",

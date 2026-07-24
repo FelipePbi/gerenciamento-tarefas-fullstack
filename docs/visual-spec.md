@@ -75,6 +75,8 @@ aproximadamente `390 x 844 dp`.
   `Tarefas - Design`.
 - Status e ordenacao ficam em um unico campo responsivo que abre modal e
   aplica as duas escolhas em conjunto.
+- A lista carrega tarefas sob demanda em lotes de `7`, iniciando a proxima
+  pagina ao se aproximar do final e sem repetir itens.
 - Cards usam altura minima de `132 dp`, raio `6 dp`, padding `16 dp` e
   intervalo `16 dp`. Exibem titulo, chips coloridos dos times, descricao em
   ate quatro linhas e status compacto somente visual. O toque abre o detalhe.
