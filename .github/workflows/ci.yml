@@ -47,6 +47,7 @@ jobs:
         run: npm ci --prefix mobile
       - name: Migrate and seed
         run: |
+          npm run db:generate --prefix api
           npm run db:migrate --prefix api
           npm run db:seed --prefix api
       - name: API quality
