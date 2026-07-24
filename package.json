@@ -1,0 +1,27 @@
+{
+  "name": "times-tarefas-fullstack",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "postinstall": "npm run install:all",
+    "install:all": "npm ci --prefix api && npm run db:generate --prefix api && npm ci --prefix mobile",
+    "dev": "powershell -ExecutionPolicy Bypass -File scripts/start-dev.ps1",
+    "start": "npm run start --prefix api",
+    "lint": "npm run lint --prefix api && npm run lint --prefix mobile",
+    "format": "npm run format --prefix api && npm run format --prefix mobile",
+    "format:check": "npm run format:check --prefix api && npm run format:check --prefix mobile",
+    "typecheck": "npm run typecheck --prefix api && npm run typecheck --prefix mobile",
+    "test": "npm test --prefix api && npm run test:mobile --prefix mobile -- --watch=false",
+    "test:unit": "npm run test:unit --prefix api",
+    "test:integration": "npm run test:integration --prefix api",
+    "test:mobile": "npm run test:mobile --prefix mobile -- --watch=false",
+    "build": "npm run build --prefix api && powershell -ExecutionPolicy Bypass -File scripts/build-android.ps1",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "db:migrate": "npm run db:migrate --prefix api",
+    "db:seed": "npm run db:seed --prefix api",
+    "seed": "npm run db:seed",
+    "android": "powershell -ExecutionPolicy Bypass -File scripts/run-android.ps1",
+    "validate": "powershell -ExecutionPolicy Bypass -File scripts/validate-all.ps1"
+  }
+}
