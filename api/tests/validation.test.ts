@@ -22,6 +22,12 @@ describe("domain validation", () => {
     ).toThrow();
   });
 
+  it("rejects a trimmed team name shorter than three characters", () => {
+    expect(() =>
+      teamInputSchema.parse({ name: " a ", colorHex: "#00A67D" }),
+    ).toThrow();
+  });
+
   it("rejects removed team and task fields", () => {
     expect(() =>
       teamInputSchema.parse({

@@ -12,7 +12,11 @@ export const idParamsSchema = z.object({ id: z.uuid() });
 
 export const teamInputSchema = z
   .object({
-    name: z.string().trim().min(1, "Nome e obrigatorio.").max(120),
+    name: z
+      .string()
+      .trim()
+      .min(3, "Nome deve ter ao menos 3 caracteres.")
+      .max(120),
     colorHex: z
       .string()
       .trim()

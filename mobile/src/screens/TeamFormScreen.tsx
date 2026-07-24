@@ -28,7 +28,11 @@ import type { RootStackParamList } from '../navigation/types';
 import type { TeamInput } from '../types/domain';
 
 export const teamFormSchema = z.object({
-  name: z.string().trim().min(1, 'Informe o nome do time.').max(120),
+  name: z
+    .string()
+    .trim()
+    .min(3, 'Nome deve ter ao menos 3 caracteres.')
+    .max(120),
   colorHex: z
     .string()
     .trim()

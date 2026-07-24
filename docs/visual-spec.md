@@ -69,9 +69,12 @@ Fontes adicionais: lista (`375 x 757 px`), detalhe, edicao (`391 x 859 px`) e
 criacao (`402 x 844 px`) fornecidas em 23/07/2026 e normalizadas para
 aproximadamente `390 x 844 dp`.
 
-- A lista aberta por um time usa titulo `22 sp`, subtitulo `14 sp`, padding
-  horizontal de `20 dp` e nao mostra busca ou filtros. Esses controles
-  permanecem disponiveis somente na lista global.
+- Listas global e por time usam titulo `22 sp`, subtitulo `14 sp`, padding
+  horizontal de `20 dp`, busca de `52 dp` e o mesmo componente de filtros.
+- A lista filtrada identifica o contexto no titulo, como
+  `Tarefas - Design`.
+- Status e ordenacao ficam em um unico campo responsivo que abre modal e
+  aplica as duas escolhas em conjunto.
 - Cards usam altura minima de `132 dp`, raio `6 dp`, padding `16 dp` e
   intervalo `16 dp`. Exibem titulo, chips coloridos dos times, descricao em
   ate quatro linhas e status compacto somente visual. O toque abre o detalhe.

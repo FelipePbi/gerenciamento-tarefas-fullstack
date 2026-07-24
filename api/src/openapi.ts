@@ -1,7 +1,7 @@
 export const openApiDocument = {
   openapi: "3.1.0",
   info: {
-    title: "Times e Tarefas API",
+    title: "Gerenciamento de Times e Tarefas API",
     version: "1.0.0",
     description:
       "CRUD de times e tarefas com relacionamento muitos-para-muitos.",

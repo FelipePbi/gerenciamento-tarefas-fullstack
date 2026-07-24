@@ -68,6 +68,15 @@ describe('mobile form validation', () => {
     ).toBe(false);
   });
 
+  it('rejects a trimmed team name shorter than three characters', () => {
+    expect(
+      teamFormSchema.safeParse({
+        name: ' a ',
+        colorHex: '#00A67D',
+      }).success,
+    ).toBe(false);
+  });
+
   it('normalizes the team payload without obsolete fields', () => {
     expect(
       toTeamInput({

@@ -1,38 +1,22 @@
-# Times e Tarefas - React Native + Express + PostgreSQL
+# Gerenciador de Times e Tarefas - React Native + Express + PostgreSQL
 
-Aplicacao fullstack para gerenciar times e tarefas. Mobile React Native CLI consome API Express real; API persiste dados em PostgreSQL via Prisma. Inclui CRUDs, relacionamento N:N, busca, filtros combinados, ordenacao, paginacao, cache offline, optimistic update, migrations, seed, Swagger, testes e automacao Windows.
+Aplicação fullstack para gerenciar times e tarefas. Mobile React Native CLI consome API Express real; API persiste dados em PostgreSQL via Prisma. Inclui CRUDs, relacionamento N:N, busca, filtros combinados, ordenação, paginação, cache offline, optimistic update, migrations, seed, Swagger, testes e automação Windows.
 
-![Lista de times executada no Android Emulator](docs/teams.png)
-
-| Tarefas filtradas | Formulario de tarefa |
-| --- | --- |
-| ![Tarefas](docs/tasks.png) | ![Nova tarefa](docs/task-form.png) |
-
-### Editar tarefa
-
-![Formulario Editar tarefa](docs/task-edit.png)
-
-### Detalhe da tarefa
-
-![Detalhe com chips e acoes rapidas](docs/detail.png)
-
-### Novo Time
-
-![Formulario Novo Time com seletor de cores](docs/team-form.png)
+![Showcase](docs/task-management-app-showcase.png)
 
 ## Funcionalidades
 
-- Times: listar, pesquisar, paginar, detalhar, criar, editar e excluir com confirmacao.
-- Tarefas: criacao, lista global ou por time, detalhe, edicao completa,
-  exclusao, pesquisa textual, ordenacao e paginacao.
-- Tarefas podem pertencer a zero, um ou varios times.
-- Exclusao de time remove somente vinculos; tarefas permanecem.
-- Status `PENDING`, `IN_PROGRESS` e `COMPLETED`, com alteracao rapida no detalhe.
+- Times: listar, pesquisar, paginar, detalhar, criar, editar e excluir com confirmação.
+- Tarefas: criação, lista global ou por time, detalhe, edição completa,
+  exclusão, pesquisa textual, ordenação e paginação.
+- Tarefas podem pertencer a zero, um ou vários times.
+- Exclusão de time remove somente vínculos; tarefas permanecem.
+- Status `PENDING`, `IN_PROGRESS` e `COMPLETED`, com alteração rápida no detalhe.
 - Times aparecem como chips coloridos nos cards e no detalhe da tarefa.
-- Loading, refresh, pagina seguinte, vazio, sem resultados, erro/retry e feedback de mutacao.
-- Cache de queries em MMKV por sete dias; ultimos dados ficam visiveis offline.
-- Reconexao refaz queries. Mutacoes offline nao fingem sucesso e nao sao enfileiradas.
-- Alteracao de status e otimista, com rollback se API falhar.
+- Loading, refresh, página seguinte, vazio, sem resultados, erro/retry e feedback de mutação.
+- Cache de queries em MMKV por sete dias; últimos dados ficam visíveis offline.
+- Reconexão refaz queries. Mutações offline não fingem sucesso e não são enfileiradas.
+- Alteração de status é otimista, com rollback se API falhar.
 - Swagger em `/docs` e contrato OpenAPI em `/openapi.json`.
 
 ## Stack validada
@@ -40,8 +24,8 @@ Aplicacao fullstack para gerenciar times e tarefas. Mobile React Native CLI cons
 | Camada | Tecnologias |
 | --- | --- |
 | Mobile | React Native CLI 0.86, React 19, TypeScript 5.8, React Navigation 7 |
-| Estado remoto | TanStack React Query 5 + persistencia MMKV 4 + NetInfo |
-| Formularios | React Hook Form 7 + Zod 4 (`zod/v3` no bundle RN por compatibilidade Metro) |
+| Estado remoto | TanStack React Query 5 + persistência MMKV 4 + NetInfo |
+| Formulários | React Hook Form 7 + Zod 4 (`zod/v3` no bundle RN por compatibilidade Metro) |
 | UI | NativeWind 4, Tailwind CSS 3, Lucide, React Native SVG, Safe Area |
 | API | Node.js 24 LTS, Express 5, TypeScript 6, Zod 4 |
 | Dados | PostgreSQL 18, Prisma 6.19, migrations SQL versionadas |
@@ -58,7 +42,7 @@ RN/
 │   │   ├── config|db|errors|middleware|validation/
 │   │   ├── routes/             health, teams e tasks
 │   │   └── openapi.ts
-│   └── tests/                  unitarios e integracao PostgreSQL
+│   └── tests/                  unitários e integração PostgreSQL
 ├── mobile/
 │   ├── android|ios/
 │   └── src/
@@ -66,10 +50,10 @@ RN/
 │       ├── design-system/
 │       ├── features/teams|tasks/
 │       ├── screens|services|types|hooks/
-├── docs/                       especificacao visual e screenshots
-├── scripts/                    automacao PowerShell/Windows
+├── docs/                       especificação visual e screenshots
+├── scripts/                    automação PowerShell/Windows
 ├── docker-compose.yml
-└── package.json                comandos de conveniencia
+└── package.json                comandos de conveniência
 ```
 
 ```mermaid
@@ -83,15 +67,15 @@ flowchart LR
   PG --> PR --> EX --> HTTP --> RQ --> UI
 ```
 
-### Decisoes
+### Decisões
 
-- PostgreSQL: integridade referencial, transacoes, N:N, filtros e ordenacao SQL. Trade-off: exige processo externo e migrations.
-- Prisma: schema tipado, migration reproduzivel e includes que evitam N+1. Trade-off: engine e etapa de geracao.
-- Express: pequeno, explicito e adequado ao escopo. Validacao e erros ficam fora de componentes mobile.
-- React Query: API e cache sao unica fonte de server state. Estado de busca/filtro continua local.
-- MMKV: cache sincrono e rapido no Android. MMKV 4 exige New Architecture/Nitro, habilitada no projeto.
-- Sem Redux/Zustand: nenhum estado global adicional e necessario.
-- Sem fila offline de mutacao: evita duplicacao e conflitos silenciosos. Usuario recebe erro real; queries sao refeitas na reconexao.
+- PostgreSQL: integridade referencial, transações, N:N, filtros e ordenação SQL. Trade-off: exige processo externo e migrations.
+- Prisma: schema tipado, migration reproduzível e includes que evitam N+1. Trade-off: engine e etapa de geração.
+- Express: pequeno, explícito e adequado ao escopo. Validação e erros ficam fora de componentes mobile.
+- React Query: API e cache são a única fonte de server state. Estado de busca/filtro continua local.
+- MMKV: cache síncrono e rápido no Android. MMKV 4 exige New Architecture/Nitro, habilitada no projeto.
+- Sem Redux/Zustand: nenhum estado global adicional e necessário.
+- Sem fila offline de mutação: evita duplicação e conflitos silenciosos. Usuário recebe erro real; queries são refeitas na reconexão.
 
 ## Modelo de dados
 
@@ -121,9 +105,9 @@ erDiagram
   }
 ```
 
-`TaskTeam` usa chave composta e indices nos dois sentidos. FKs usam `ON DELETE CASCADE` somente no vinculo: excluir time nao exclui tarefa; excluir tarefa nao exclui time.
+`TaskTeam` usa chave composta e índices nos dois sentidos. FKs usam `ON DELETE CASCADE` somente no vínculo: excluir time não exclui tarefa; excluir tarefa não exclui time.
 
-## Pre-requisitos Windows
+## Pré-requisitos Windows
 
 - Windows 10/11 com PowerShell 7 ou Windows PowerShell 5.1.
 - Node.js 24 LTS e npm 11.
@@ -132,13 +116,13 @@ erDiagram
 - Android Studio/SDK, Platform 36, Build Tools 36 e AVD.
 - `ANDROID_HOME` configurado; `adb` e `emulator` no `PATH`.
 
-Validado neste workspace com Node `24.18.0`, npm `11.16.0`, OpenJDK `17.0.20`, PostgreSQL `18.4` nativo e AVD API 36. Docker nao estava instalado no host de validacao; Compose foi fornecido para reproducao limpa.
+Validado neste workspace com Node `24.18.0`, npm `11.16.0`, OpenJDK `17.0.20`, PostgreSQL `18.4` nativo e AVD API 36. Docker não estava instalado no host de validação; Compose foi fornecido para reprodução limpa.
 
 No Windows, prefira um caminho curto, como `C:\dev\times-tarefas-fullstack`.
-Dependencias nativas do React Native/CMake podem exceder o limite de caminho do
-Windows quando o repositorio fica aninhado em diretorios longos.
+Dependências nativas do React Native/CMake podem exceder o limite de caminho do
+Windows quando o repositório fica aninhado em diretórios longos.
 
-## Variaveis de ambiente
+## Variáveis de ambiente
 
 Copie exemplos; nunca versione os arquivos gerados:
 
@@ -148,29 +132,29 @@ Copy-Item api\.env.example api\.env
 Copy-Item mobile\.env.example mobile\.env
 ```
 
-| Arquivo/variavel | Finalidade | Exemplo seguro | Obrigatoria |
+| Arquivo/variável | Finalidade | Exemplo seguro | Obrigatória |
 | --- | --- | --- | --- |
-| raiz `POSTGRES_DB` | banco do Compose | `rn_app` | nao, possui default |
-| raiz `POSTGRES_USER` | usuario Compose | `rn_app_user` | nao, possui default |
-| raiz `POSTGRES_PASSWORD` | senha local Compose | `rn_app_password` | nao, possui default |
-| raiz `POSTGRES_PORT` | porta host | `5433` | nao |
-| API `NODE_ENV` | ambiente | `development` | nao |
-| API `HOST`/`PORT` | bind HTTP | `0.0.0.0` / `3000` | nao |
-| API `PGHOST`/`PGPORT` | PostgreSQL | `127.0.0.1` / `5433` com Compose | nao |
+| raiz `POSTGRES_DB` | banco do Compose | `rn_app` | não, possui default |
+| raiz `POSTGRES_USER` | usuário Compose | `rn_app_user` | não, possui default |
+| raiz `POSTGRES_PASSWORD` | senha local Compose | `rn_app_password` | não, possui default |
+| raiz `POSTGRES_PORT` | porta host | `5433` | não |
+| API `NODE_ENV` | ambiente | `development` | não |
+| API `HOST`/`PORT` | bind HTTP | `0.0.0.0` / `3000` | não |
+| API `PGHOST`/`PGPORT` | PostgreSQL | `127.0.0.1` / `5433` com Compose | não |
 | API `PGDATABASE` | database | `rn_app` | sim |
-| API `PGUSER` | usuario | `rn_app_user` | sim |
+| API `PGUSER` | usuário | `rn_app_user` | sim |
 | API `PGPASSWORD` | senha | `rn_app_password` | sim |
-| API `PGPOOL_MAX` | limite do pool | `10` | nao |
-| API `CORS_ORIGIN` | origem permitida | `*` somente local | nao |
-| Mobile `API_BASE_URL` | host da API | `http://localhost:3000` | nao, possui default local |
+| API `PGPOOL_MAX` | limite do pool | `10` | não |
+| API `CORS_ORIGIN` | origem permitida | `*` somente local | não |
+| Mobile `API_BASE_URL` | host da API | `http://localhost:3000` | não, possui default local |
 
-Prisma recebe URL montada internamente a partir de `PG*`; senha nao precisa ser duplicada em `DATABASE_URL`.
+Prisma recebe URL montada internamente a partir de `PG*`; senha não precisa ser duplicada em `DATABASE_URL`.
 
-## Execucao local
+## Execução local
 
-### 1. Instalacao limpa
+### 1. Instalação limpa
 
-Na raiz `C:\RN`:
+Na raiz:
 
 ```powershell
 npm ci
@@ -187,7 +171,7 @@ npm run db:up
 docker compose ps
 ```
 
-Sem Docker, crie banco/usuario equivalentes no PostgreSQL local e ajuste `api\.env`. Teste com `pg_isready -h 127.0.0.1 -p 5432`.
+Sem Docker, crie banco/usuário equivalentes no PostgreSQL local e ajuste `api\.env`. Teste com `pg_isready -h 127.0.0.1 -p 5432`.
 
 ### 3. Migration e seed
 
@@ -196,7 +180,7 @@ npm run db:migrate
 npm run db:seed
 ```
 
-Migration leva banco vazio ao schema completo. Seed e idempotente.
+Migration leva banco vazio ao schema completo. Seed é idempotente.
 
 ### 4. API
 
@@ -221,37 +205,40 @@ curl.exe http://localhost:3000/health/db
 Start-Process http://localhost:3000/docs
 ```
 
+#### Documentação no Swagger (http://localhost:3000/docs)
+
+![Showcase](docs/swagger.png)
+
 ### 5. Android Emulator
 
 Inicie um AVD pelo Device Manager do Android Studio. Em outro PowerShell:
 
 ```powershell
-cd C:\RN
 npm run android
 ```
 
-`npm run android` inicia Metro quando necessario, compila/instala o app e
+`npm run android` inicia Metro quando necessário, compila/instala o app e
 configura `adb reverse` para API e Metro. Sem reverse, use
-`http://10.0.2.2:3000` no `mobile\.env` e recompile. Dispositivo fisico via
-Wi-Fi deve usar IP privado do computador; producao deve usar HTTPS.
+`http://10.0.2.2:3000` no `mobile\.env` e recompile. Dispositivo físico via
+Wi-Fi deve usar IP privado do computador; produção deve usar HTTPS.
 
 Alternativa: `npm run dev` inicia API e Metro juntos; mantenha esse terminal
 aberto e execute `npm run android` em outro.
 
 ## Scripts
 
-| Comando na raiz | Acao |
+| Comando na raiz | Ação |
 | --- | --- |
 | `npm ci` | instala raiz e ambos os projetos |
-| `npm run dev` | inicia API, aguarda healthcheck e mantem Metro no terminal atual |
+| `npm run dev` | inicia API, aguarda healthcheck e mantém Metro no terminal atual |
 | `npm start` | inicia API compilada |
 | `npm run lint` | ESLint API + mobile |
 | `npm run format` | Prettier API + mobile |
-| `npm run format:check` | valida formatacao |
+| `npm run format:check` | valida formatação |
 | `npm run typecheck` | TypeScript estrito em ambos |
 | `npm test` | testes API + mobile |
-| `npm run test:unit` | unitarios API |
-| `npm run test:integration` | integracao API/PostgreSQL |
+| `npm run test:unit` | unitários API |
+| `npm run test:integration` | integração API/PostgreSQL |
 | `npm run test:mobile` | Jest/RNTL |
 | `npm run build` | compila API + APK debug |
 | `npm run db:up` / `db:down` | sobe/desliga PostgreSQL Compose |
@@ -262,13 +249,13 @@ aberto e execute `npm run android` em outro.
 
 ## Contratos da API
 
-Todas as listagens retornam `{ data, meta }`, com `total`, `limit`, `offset`, `hasNext`. Recursos unitarios retornam `{ data }`. Erros usam:
+Todas as listagens retornam `{ data, meta }`, com `total`, `limit`, `offset`, `hasNext`. Recursos unitários retornam `{ data }`. Erros usam:
 
 ```json
 {
   "error": {
     "code": "VALIDATION_ERROR",
-    "message": "Os dados enviados sao invalidos.",
+    "message": "Os dados enviados são inválidos.",
     "details": [{ "path": "title", "message": "..." }]
   }
 }
@@ -291,15 +278,15 @@ Todas as listagens retornam `{ data, meta }`, com `total`, `limit`, `offset`, `h
 - `PATCH /api/tasks/:id/status`
 - `DELETE /api/tasks/:id`
 
-Sort permitido: `createdAt:desc`, `createdAt:asc`, `updatedAt:desc`, `title:asc`, `title:desc`. Limite maximo: 100. Entrada invalida usa HTTP 422; conflito 409; ausente 404; exclusao 204.
+Sort permitido: `createdAt:desc`, `createdAt:asc`, `updatedAt:desc`, `title:asc`, `title:desc`. Limite máximo: 100. Entrada inválida usa HTTP 422; conflito 409; ausente 404; exclusão 204.
 
-## cURLs copiaveis
+## cURLs copiáveis
 
 ```powershell
 # Criar time
 curl.exe -X POST http://localhost:3000/api/teams `
   -H "Content-Type: application/json" `
-  -d '{"name":"Operacoes","colorHex":"#6750A4"}'
+  -d '{"name":"Operações","colorHex":"#6750A4"}'
 
 # Pesquisar/paginar times
 curl.exe "http://localhost:3000/api/teams?search=opera&limit=10&offset=0"
@@ -324,13 +311,13 @@ curl.exe -X PATCH http://localhost:3000/api/tasks/UUID/status `
 # Atualizar e excluir
 curl.exe -X PUT http://localhost:3000/api/teams/UUID `
   -H "Content-Type: application/json" `
-  -d '{"name":"Operacoes Editado","colorHex":"#6750A4"}'
+  -d '{"name":"Operações Editado","colorHex":"#6750A4"}'
 curl.exe -X DELETE http://localhost:3000/api/tasks/UUID
 ```
 
 ## Seed
 
-`npm run db:seed` faz upsert de 3 times e 10 tarefas fixas, cobre tres status, tarefa sem time, tarefas com varios times e descricoes de tarefa pesquisaveis. Depois redefine somente vinculos das tarefas do seed, portanto repeticao nao duplica dados.
+`npm run db:seed` faz upsert de 3 times e 10 tarefas fixas, cobre três status, tarefa sem time, tarefas com vários times e descrições de tarefa pesquisáveis. Depois redefine somente vínculos das tarefas do seed, portanto repetição não duplica dados.
 
 ## Testes e qualidade
 
@@ -343,37 +330,37 @@ npm run test:mobile
 npm run build
 ```
 
-- API unit: ambiente, payloads, cores, titulo, status, filtros, paginacao, sort e envelopes.
-- API integracao: PostgreSQL real, CRUD completo, conflitos, zero/multiplos times, pesquisa, filtros combinados, metadata, status, update, exclusoes e preservacao de tarefa.
-- Mobile: listas, detalhe, edicao completa, chips coloridos, acoes de status,
-  API client, formularios e transformacao de cache otimista.
+- API unit: ambiente, payloads, cores, título, status, filtros, paginação, sort e envelopes.
+- API integração: PostgreSQL real, CRUD completo, conflitos, zero/múltiplos times, pesquisa, filtros combinados, metadata, status, update, exclusões e preservação de tarefa.
+- Mobile: listas, detalhe, edição completa, chips coloridos, ações de status,
+  API client, formulários e transformação de cache otimista.
 - CI em `.github/workflows/ci.yml` sobe PostgreSQL e executa migration, seed,
   lint, typecheck, testes e build da API.
 
-## Referencia visual
+## Referência visual
 
-Fonte: unico print anexado ao Goal, prancha 751 x 935 com cinco mockups. Analise detalhada: [`docs/visual-spec.md`](docs/visual-spec.md).
+Fonte: único print anexado ao Goal, prancha 751 x 935 com cinco mockups. Análise detalhada: [`docs/visual-spec.md`](docs/visual-spec.md).
 
-| Regiao do print | Implementacao |
+| Região do print | Implementação |
 | --- | --- |
 | Lista `Times`, busca, cards coloridos, CTA | `TeamsScreen`, `TeamCard`, `SearchInput` |
 | Lista `Tarefas`, cards e pills | `TasksScreen`, `TaskCard`; filtros somente na lista global |
-| Detalhe, chips e status rapido | `TaskDetailScreen`, `TaskTeamChips` |
+| Detalhe, chips e status rápido | `TaskDetailScreen`, `TaskTeamChips` |
 | `Novo Time` | `TeamFormScreen` com RHF/Zod e paleta |
 | `Nova tarefa` | `TaskFormScreen`, seletores modais de status e multi-times |
-| `Editar tarefa` + lixeira | `TaskFormScreen` com edicao completa via `PUT` |
+| `Editar tarefa` + lixeira | `TaskFormScreen` com edição completa via `PUT` |
 
-Tokens aproximados inferidos: canvas `#1D1E22`, surface `#25262B`, input `#151518`, primary `#00A67D`, texto `#F5F5F6`, muted `#81828A`, raios 3-6 dp e padding principal 20 dp. Valores sao aproximacoes visuais, nao medidas declaradas pelo design.
+Tokens aproximados inferidos: canvas `#1D1E22`, surface `#25262B`, input `#151518`, primary `#00A67D`, texto `#F5F5F6`, muted `#81828A`, raios 3-6 dp e padding principal 20 dp. Valores são aproximações visuais, não medidas declaradas pelo design.
 
-Telas extras obrigatorias (detalhe, filtros, loading, vazio, erro, offline e
-confirmacoes) derivam dos mesmos tokens. Icones Lucide substituem os desenhos
+Telas extras obrigatórias (detalhe, filtros, loading, vazio, erro, offline e
+confirmações) derivam dos mesmos tokens. Ícones Lucide substituem os desenhos
 lineares do print sem emojis. Chips de time usam `colorHex`, como exige o
-brief. Busca, filtros e ordenacao continuam acessiveis na lista global; a
-lista aberta por um time segue a composicao limpa da referencia.
+brief. Busca, filtros e ordenação continuam acessíveis na lista global; a
+lista aberta por um time segue a composição limpa da referência.
 
 ## Deploy
 
-Nenhum deploy externo foi executado: nao houve autorizacao nem credenciais. API esta preparada com `api/Dockerfile`, variaveis, healthcheck e migration deploy.
+Nenhum deploy externo foi executado: não houve autorização nem credenciais. A API está preparada com `api/Dockerfile`, variáveis, healthcheck e migration deploy.
 
 ```powershell
 docker build -t times-tarefas-api api
@@ -384,24 +371,18 @@ curl.exe http://localhost:3000/health
 
 Em plataforma gerenciada: provisionar PostgreSQL, definir `PG*`, executar migration como release command, iniciar `node dist/server.js` e configurar healthcheck `/health`.
 
-## Producao
+## Produção
 
-Evolucoes recomendadas:
+Oportunidades de melhoria:
 
-- autenticacao, autorizacao por time e auditoria;
+- autenticação, autorização por time e auditoria;
 - rate limiting, CORS restrito, HTTPS e secret manager;
-- logs estruturados, metricas, tracing e alertas;
-- backup/PITR, HA, pool gerenciado e plano de rollback de migration;
-- paginacao por cursor para grande volume e busca com indice trigram/full-text;
-- fila somente para processos assincronos idempotentes;
-- sincronizacao offline com versao/ETag, fila duravel e resolucao explicita de conflitos;
-- SAST, Dependabot/Renovate, assinatura release, CI Android e distribuicao interna;
-- cache compartilhado apenas se metricas justificarem custo/complexidade.
+- logs estruturados, métricas, tracing e alertas;
+- paginação por cursor para grande volume;
+- fila somente para processos assíncronos idempotentes;
+- cache compartilhado apenas se métricas justificarem custo/complexidade.
 
-## Limitacoes verificadas
+## Limitações verificadas
 
-- Docker Compose foi escrito, mas nao executado porque Docker nao existe no host; PostgreSQL 18.4 nativo foi usado em todas as validacoes reais.
-- iOS nao foi compilado no Windows; codigo React Native e projeto iOS permanecem presentes para build em macOS/Xcode.
-- PDF da avaliacao foi revisado localmente e fica ignorado pelo Git para nao
-  republicar material de avaliacao no repositorio publico.
-- Deploy/publicacao externa ficaram fora da autorizacao.
+- iOS não foi compilado no Windows; código React Native e projeto iOS permanecem presentes para build em macOS/Xcode.
+- Deploy/publicação externa ficaram fora dessa avaliação.
