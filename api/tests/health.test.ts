@@ -44,7 +44,7 @@ describe("health routes", () => {
       api: "ok",
       database: "ok",
       databaseTime,
-      message: "React Native, Express e PostgreSQL estão conectados.",
+      message: "Express e PostgreSQL estão conectados.",
     });
   });
 
