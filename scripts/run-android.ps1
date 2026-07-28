@@ -1,3 +1,7 @@
+param(
+  [string]$AvdName = "RN_Pixel_4_API_36"
+)
+
 $ErrorActionPreference = "Stop"
 
 $projectRoot = Split-Path -Parent $PSScriptRoot
@@ -54,6 +58,54 @@ function Resolve-Adb {
   return $adbPath
 }
 
+function Resolve-Emulator {
+  $emulatorCommand = Get-Command emulator.exe -ErrorAction SilentlyContinue
+  if ($emulatorCommand) {
+    return $emulatorCommand.Source
+  }
+
+  $sdkRoot = if ($env:ANDROID_HOME) {
+    $env:ANDROID_HOME
+  }
+  elseif ($env:ANDROID_SDK_ROOT) {
+    $env:ANDROID_SDK_ROOT
+  }
+  else {
+    Join-Path $env:LOCALAPPDATA "Android\Sdk"
+  }
+
+  $emulatorPath = Join-Path $sdkRoot "emulator\emulator.exe"
+  if (-not (Test-Path -LiteralPath $emulatorPath)) {
+    throw "emulator.exe não encontrado. Configure ANDROID_HOME ou instale o Android Emulator."
+  }
+
+  return $emulatorPath
+}
+
+function Get-RunningAvdSerial {
+  param(
+    [string]$AdbPath,
+    [string]$Name
+  )
+
+  $deviceLines = (& $AdbPath devices) |
+    Select-Object -Skip 1 |
+    Where-Object { $_ -match "^(emulator-\d+)\s+device$" }
+
+  foreach ($line in $deviceLines) {
+    $serial = ($line -split "\s+")[0]
+    $runningName = (
+      & $AdbPath -s $serial emu avd name 2>$null |
+        Select-Object -First 1
+    )
+    if ($runningName -and $runningName.Trim() -eq $Name) {
+      return $serial
+    }
+  }
+
+  return $null
+}
+
 if (-not (Test-Metro)) {
   Write-Host "Iniciando Metro em $metroStatusUrl..."
 
@@ -79,19 +131,57 @@ if (-not (Test-Metro)) {
 Write-Host "Metro pronto em $metroStatusUrl."
 
 $adb = Resolve-Adb
+$emulator = Resolve-Emulator
 & $adb start-server | Out-Null
 
-$connectedDevices = (& $adb devices) | Where-Object { $_ -match "\sdevice$" }
-if ($connectedDevices) {
-  & $adb reverse "tcp:$metroPort" "tcp:$metroPort" | Out-Null
-  & $adb reverse "tcp:$apiPort" "tcp:$apiPort" | Out-Null
-  Write-Host "ADB reverse configurado para portas $metroPort e $apiPort."
+$availableAvds = & $emulator -list-avds
+if ($AvdName -notin $availableAvds) {
+  throw "AVD '$AvdName' não encontrado. Disponíveis: $($availableAvds -join ', ')."
 }
 
-& $npmCommand run android --prefix $mobileRoot -- --no-packager --active-arch-only
+$targetSerial = Get-RunningAvdSerial -AdbPath $adb -Name $AvdName
+if (-not $targetSerial) {
+  Write-Host "Iniciando emulador compacto $AvdName..."
+  Start-Process `
+    -FilePath $emulator `
+    -ArgumentList @("-avd", $AvdName)
+
+  $emulatorDeadline = (Get-Date).AddMinutes(3)
+  while ((Get-Date) -lt $emulatorDeadline -and -not $targetSerial) {
+    Start-Sleep -Seconds 2
+    $targetSerial = Get-RunningAvdSerial -AdbPath $adb -Name $AvdName
+  }
+}
+
+if (-not $targetSerial) {
+  throw "Emulador '$AvdName' não ficou disponível dentro de 3 minutos."
+}
+
+$bootDeadline = (Get-Date).AddMinutes(2)
+do {
+  $bootCompleted = (& $adb -s $targetSerial shell getprop sys.boot_completed 2>$null).Trim()
+  if ($bootCompleted -eq "1") {
+    break
+  }
+  Start-Sleep -Seconds 2
+} while ((Get-Date) -lt $bootDeadline)
+
+if ($bootCompleted -ne "1") {
+  throw "Android não concluiu a inicialização no emulador '$AvdName'."
+}
+
+Write-Host "Executando no $AvdName ($targetSerial)."
+& $adb -s $targetSerial reverse "tcp:$metroPort" "tcp:$metroPort" | Out-Null
+& $adb -s $targetSerial reverse "tcp:$apiPort" "tcp:$apiPort" | Out-Null
+Write-Host "ADB reverse configurado para portas $metroPort e $apiPort."
+
+& $npmCommand run android --prefix $mobileRoot -- `
+  --no-packager `
+  --active-arch-only `
+  --device $targetSerial
 if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
 }
 
-& $adb reverse "tcp:$metroPort" "tcp:$metroPort" | Out-Null
-& $adb reverse "tcp:$apiPort" "tcp:$apiPort" | Out-Null
+& $adb -s $targetSerial reverse "tcp:$metroPort" "tcp:$metroPort" | Out-Null
+& $adb -s $targetSerial reverse "tcp:$apiPort" "tcp:$apiPort" | Out-Null

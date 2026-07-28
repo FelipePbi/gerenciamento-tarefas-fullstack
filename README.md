@@ -30,7 +30,7 @@ Aplicação fullstack para gerenciar times e tarefas. Mobile React Native CLI co
 | API            | Node.js 24 LTS, Express 5, TypeScript 6, Zod 4                      |
 | Dados          | PostgreSQL 18, Prisma 6.19, migrations SQL versionadas              |
 | Testes         | Vitest, Supertest, Jest, React Native Testing Library               |
-| Ambiente usado | Windows 11, JDK 17, Android API 36, AVD `RN_Android_API_36`         |
+| Ambiente usado | Windows 11, JDK 17, Android API 36, AVD `RN_Pixel_4_API_36`         |
 
 ## Arquitetura
 
@@ -211,14 +211,13 @@ Start-Process http://localhost:3000/docs
 
 ### 5. Android Emulator
 
-Inicie um AVD pelo Device Manager do Android Studio. Em outro PowerShell:
-
 ```powershell
 npm run android
 ```
 
-`npm run android` inicia Metro quando necessário, compila/instala o app e
-configura `adb reverse` para API e Metro. Sem reverse, use
+`npm run android` inicia ou reutiliza automaticamente o AVD compacto
+`RN_Pixel_4_API_36`, direciona a instalação para ele, inicia Metro quando
+necessário e configura `adb reverse` para API e Metro. Sem reverse, use
 `http://10.0.2.2:3000` no `mobile\.env` e recompile. Dispositivo físico via
 Wi-Fi deve usar IP privado do computador; produção deve usar HTTPS.
 
@@ -345,43 +344,8 @@ npm run build
 - CI em `.github/workflows/ci.yml` sobe PostgreSQL e executa migration, seed,
   lint, typecheck, testes e build da API.
 
-## Referência visual
 
-Fonte: único print anexado ao Goal, prancha 751 x 935 com cinco mockups. Análise detalhada: [`docs/visual-spec.md`](docs/visual-spec.md).
-
-| Região do print                            | Implementação                                              |
-| ------------------------------------------ | ---------------------------------------------------------- |
-| Lista `Times`, busca, cards coloridos, CTA | `TeamsScreen`, `TeamCard`, `SearchInput`                   |
-| Lista `Tarefas`, cards e pills             | `TasksScreen`, `TaskCard`; busca e filtros globais/por time |
-| Detalhe, chips e status rápido             | `TaskDetailScreen`, `TaskTeamChips`                        |
-| `Novo Time`                                | `TeamFormScreen` com RHF/Zod e paleta                      |
-| `Nova tarefa`                              | `TaskFormScreen`, seletores modais de status e multi-times |
-| `Editar tarefa` + lixeira                  | `TaskFormScreen` com edição completa via `PUT`             |
-
-Tokens aproximados inferidos: canvas `#1D1E22`, surface `#25262B`, input `#151518`, primary `#00A67D`, texto `#F5F5F6`, muted `#81828A`, raios 3-6 dp e padding principal 20 dp. Valores são aproximações visuais, não medidas declaradas pelo design.
-
-Telas extras obrigatórias (detalhe, filtros, loading, vazio, erro, offline e
-confirmações) derivam dos mesmos tokens. Ícones Lucide substituem os desenhos
-lineares do print sem emojis. Chips de time usam `colorHex`, como exige o
-brief. Busca, filtros e ordenação continuam acessíveis na lista global; a
-lista aberta por um time segue a composição limpa da referência.
-
-## Deploy
-
-Nenhum deploy externo foi executado: não houve autorização nem credenciais. A API está preparada com `api/Dockerfile`, variáveis, healthcheck e migration deploy.
-
-```powershell
-docker build -t times-tarefas-api api
-docker run --rm --env-file api\.env times-tarefas-api node dist/db/runPrisma.js migrate deploy
-docker run --rm -p 3000:3000 --env-file api\.env times-tarefas-api
-curl.exe http://localhost:3000/health
-```
-
-Em plataforma gerenciada: provisionar PostgreSQL, definir `PG*`, executar migration como release command, iniciar `node dist/server.js` e configurar healthcheck `/health`.
-
-## Produção
-
-Oportunidades de melhoria:
+## Oportunidades de melhoria:
 
 - autenticação, autorização por time e auditoria;
 - rate limiting, CORS restrito, HTTPS e secret manager;

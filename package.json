@@ -21,7 +21,7 @@
     "db:migrate": "npm run db:migrate --prefix api",
     "db:seed": "npm run db:seed --prefix api",
     "seed": "npm run db:seed",
-    "android": "powershell -ExecutionPolicy Bypass -File scripts/run-android.ps1",
+    "android": "powershell -ExecutionPolicy Bypass -File scripts/run-android.ps1 -AvdName RN_Pixel_4_API_36",
     "validate": "powershell -ExecutionPolicy Bypass -File scripts/validate-all.ps1"
   }
 }
